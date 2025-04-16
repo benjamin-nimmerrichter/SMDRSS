@@ -1,0 +1,12 @@
+function trigger = clip_detect(sig,headr,num_clips)
+%CLIP_DETECT detects if samples are above headroom
+    level = 10^(headr/20);  % dBFS to value    
+    sig(sig<level) = 0;     % samples under treshold = 1
+    sig(sig>=level) = 1;    % samples over treshold = 1
+    if sum(sig) >= num_clips   
+    % check if sum of samples over treshold > num_cl
+        trigger = true;     % if signal is clipping
+    else
+        trigger = false;    % if signal isn't clipping
+    end
+end

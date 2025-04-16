@@ -1,0 +1,9 @@
+function [config] = load_config(name)
+if 
+name = strcat(name,"_c.xml");
+if exist(name,"file") 
+    config = readstruct(name,"FileType","xml");
+    return
+end
+config = struct([]);
+end

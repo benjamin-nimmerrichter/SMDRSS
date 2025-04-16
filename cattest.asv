@@ -1,0 +1,9 @@
+num_buf = 8;
+A = zeros((512*num_buf),3);
+B = ones(num_buf,512,3);
+
+A(:,) = B(1,:,:);
+for i = 2:num_buf
+    A(512*(i-1):(512*i),:) = B(i,:,:);
+end
+
