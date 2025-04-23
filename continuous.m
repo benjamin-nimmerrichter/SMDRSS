@@ -1,65 +1,74 @@
-aPR = audioPlayerRecorder;
-fs = 44100;
-f = 1000;
+%% --- Continuous measurement for acoustic sound sources.
+aPR = audioPlayerRecorder; % create audio player recorder object
+fs = 44100; % sample rate of the recording
+f = 1000; % beep frequency
 bufferSz = 1024; % samples
 bufferT = 5; % seconds
 minT = 0.1; % min recording time seconds
 beepT = 0.2; % seconds
-threshold = 0.1; % threshold to start recording
-bufferAmt = (ceil(fs/bufferSz))*bufferT;
-minbufferAmt = (ceil(fs/bufferSz))*minT;
-n = linspace (0,round(fs*beepT),round(fs*beepT));
-t = n./fs;
-beep = sin(2*pi*f*t);
+threshold = 0.01; % threshold to start recording
+bufferAmt = (ceil(fs/bufferSz))*bufferT; % amount of buffers needed
+minbufferAmt = (ceil(fs/bufferSz))*minT; % minimum amout of buffers to be a recording
+n = linspace (0,round(fs*beepT),round(fs*beepT)); % number of samples for beep
+t = n./fs; % time vector (just for the test plot)
+beep = sin(2*pi*f*t); % vector of harmonic beep "recording started"
 %plot(t,beep)
+started = false; % if the recording got triggered
 
 %% CYCLIC BUFFER 5s(10s)
-inBuffer = zeros(bufferSz);
-outBuffer = zeros(bufferSz); 
+inBuffer = zeros(bufferSz,1);
+outBuffer = zeros(bufferSz,1); 
 mainBuffer = zeros(bufferAmt,bufferSz);
 recording = true;
-inind = -1;
+inind = 0;
 currentind = 1;
-outind = -1;
-STOPind = -1;
+outind = 0;
+STOPind = 0;
 while recording == true
-% record buffers 
-
-outBuffer = aPR(inBuffer);
-mainBuffer(currentind) = outBuffer;
-currentind = currentind + 1;
-if currentind > bufferAmt
-    currentind = 1;
-end
-
-rms_vals = calc_rms2(outBuffer);
-% if RMS rises, do prerecording step
-max_rms = max(rms_vals);
-if  max_rms > threshold
-    inind = currentind-1;
-    if inind < 1
-        inind = bufferAmt;
+    % record buffers 
+    % record and play
+    
+    outBuffer = aPR(inBuffer);
+    % add samples to main circular buffer
+    mainBuffer(currentind,:) = outBuffer(:);
+    currentind = currentind + 1;
+    if currentind > bufferAmt
+        currentind = 1;
     end
-    STOPind = mod(inind + bufferAmt, bufferAmt)+1;
-end
-
-% if RMS falls, do postrecording step
-if currentind ~= STOPind
-    if currentind > inind + minbufferAmt
-        if max_rms < threshold
-            outind = currentind + 1;
+    
+    rms_vals = calc_rms2(outBuffer);
+    % if RMS rises, do prerecording step
+    max_rms = max(rms_vals);
+    if started == false
+        if  max_rms > threshold
+            started = true;
+            inind = currentind-1;
+            if inind < 1
+                inind = bufferAmt;
+            end
+            
+                STOPind = mod(inind + bufferAmt-1, bufferAmt)+1;
+        end
+    end
+    
+    % if RMS falls, do postrecording step
+    if started == true
+        if currentind ~= STOPind
+            if currentind > inind + minbufferAmt
+                if max_rms < threshold
+                    outind = currentind;
+                    recording = false;
+                end
+            end
+        else
+            outind = STOPind;
             recording = false;
         end
     end
-else
-    outind = STOPind;
-    recording = false;
+    % if prerecording and postrecording is done (and for long enough), end
+    if inind && outind
+    end
 end
 
+output = reshape(mainBuffer(inind:outind,:),1,[]);
 
-
-
-% if prerecording and postrecording is done (and long enough), end
-if inind && outind
-end
-end
