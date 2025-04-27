@@ -27,12 +27,9 @@ beep = sin(2*pi*f*t); % vector of harmonic beep "recording started"
 started = false; % if the recording got triggered
 
 %% CYCLIC BUFFER 5s(10s)
-% initialization
 inBuffer = zeros(bufferSz,1);
 outBuffer = zeros(bufferSz,channelCount); 
 mainBuffer = zeros(bufferAmt,channelCount,bufferSz);
-meas_out = zeros(channelCount,bufferSz*bufferAmt);
-% initialization
 recording = true;
 inind = 0;
 currentind = 1;
@@ -90,15 +87,11 @@ while recording == true
     if inind && outind
     end
 end
-
-for chan = 1:channelCount
-    meas_out(chan) = reshape(mainBuffer(:,chan,:),1,[]);
-end    
+for
+meas_out = reshape(mainBuffer(inind:outind,:),1,[]);
 if clipped == true
     % error and light up the indicator
 end
 
-plot(meas_out(1,1:(20*bufferAmt)))
 % TODO: Multi channel
 % TODO: Clip detect
-% TODO: Linear to circular conversion
