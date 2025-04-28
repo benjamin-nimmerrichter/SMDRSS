@@ -1,6 +1,7 @@
 %% --- Continuous measurement for acoustic sound sources.
 % ** not needed for script version
 
+clear all
 headroomDB = 6;
 numclips = 20;
 channelMap = [1,2,3,4];
@@ -30,7 +31,7 @@ started = false; % if the recording got triggered
 % initialization
 inBuffer = zeros(bufferSz,1);
 outBuffer = zeros(bufferSz,channelCount); 
-mainBuffer = zeros(bufferAmt,channelCount,bufferSz);
+mainBuffer = zeros(channelCount,bufferAmt,bufferSz);
 meas_out = zeros(channelCount,bufferSz*bufferAmt);
 % initialization
 recording = true;
@@ -45,7 +46,7 @@ while recording == true
 
     % add samples to main circular buffer
     for chan = 1:channelCount
-        mainBuffer(currentind,chan,:) = outBuffer(:,chan);
+        mainBuffer(chan,currentind,:) = outBuffer(:,chan);
     end
     currentind = currentind + 1;
     if currentind > bufferAmt
@@ -64,7 +65,7 @@ while recording == true
             if inind < 1
                 inind = bufferAmt;
             end
-            STOPind = mod(inind + bufferAmt-1, bufferAmt)+1;
+            STOPind = mod(inind + bufferAmt-3, bufferAmt)+1;
         end
     end
     
@@ -90,15 +91,20 @@ while recording == true
     if inind && outind
     end
 end
+% unwrap function
+
+
 
 for chan = 1:channelCount
-    meas_out(chan) = reshape(mainBuffer(:,chan,:),1,[]);
+    temp = mainBuffer(chan,:,:); % this is not the way
+    temp = reshape(temp,bufferAmt,bufferSz);
+    meas_out(chan,:) =  reshape(temp',1,[]);
 end    
 if clipped == true
     % error and light up the indicator
 end
 
-plot(meas_out(1,1:(20*bufferAmt)))
+plot(meas_out(1,:))
 % TODO: Multi channel
 % TODO: Clip detect
 % TODO: Linear to circular conversion
