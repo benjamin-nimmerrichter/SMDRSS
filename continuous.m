@@ -96,11 +96,11 @@ while running == true
         currentind = 1;
     end
 end
-% circular buffer unwrap function
 
 for chan = 1:channelCount
-    temp = mainBuffer(chan,:,:); % this is not the way
+    temp = mainBuffer(chan,:,:);
     temp = reshape(temp,bufferAmt,bufferSz);
+    temp = circshift(temp,-start_ind,1); % unwrap circular buffer
     meas_out(chan,:) =  reshape(temp',1,[]);
 end    
 if clipped == true
@@ -109,5 +109,3 @@ end
 
 plot(meas_out(1,:))
 % TODO: Multi channel
-% TODO: Clip detect
-% TODO: Linear to circular conversion
