@@ -18,7 +18,6 @@ mics = 1;
 
 % ** not needed for script version
 
-clipped = false;
 bufferAmt = (ceil(fs/bufferSz))*bufferT; % amount of buffers needed
 minbufferAmt = (ceil(fs/bufferSz))*minT; % minimum amout of buffers to be a recording
 n = linspace (0,round(fs*beepT),round(fs*beepT)); % number of samples for beep
@@ -34,66 +33,70 @@ outBuffer = zeros(bufferSz,channelCount);
 mainBuffer = zeros(channelCount,bufferAmt,bufferSz);
 meas_out = zeros(channelCount,bufferSz*bufferAmt);
 % initialization
-recording = true;
+running = true;
+active = false;
 inind = 0;
 currentind = 1;
 outind = 0;
 STOPind = 0;
-while recording == true
+clipped = false;
+while running == true
+
     % record buffers 
     % record and play
     outBuffer = aPR(inBuffer);
-
+    
+    % analyse RMS values
+    rms_vals = calc_rms2(outBuffer);
+    max_rms = max(rms_vals);
+    max_rms = max(max_rms);
     % add samples to main circular buffer
     for chan = 1:channelCount
         mainBuffer(chan,currentind,:) = outBuffer(:,chan);
     end
+
+    % FSM control
+    if max_rms >= threshold
+        hyst = 0;
+        active = true;
+    else
+        hyst = hyst + 1;
+        if hyst > 5 % hysteresis
+            active = false;
+            running = false;
+            clipped = false;
+        end
+    end
+
+    if active
+        if lst_a ~= active % state switch detection
+            start_ind = currentind-1; % prerecording
+            if start_ind == 0 % wraparound
+                start_ind = bufferAmt;
+            end
+            stop_ind = start_ind-1; % records whole buffer
+            if stop_ind == 0 %wraparound
+                stop_ind = bufferAmt;
+            end
+        end
+        if clip_detect(outBuffer,headroomDB,numclips)
+            clipped = true; % clip detection
+        end
+        if currentind == stop_ind % when buffer is full
+            active = false;
+            running = false;
+        end
+    end
+    
+
+    lst_a = active;% holds last value of active
+    % index incrementation and looping
     currentind = currentind + 1;
     if currentind > bufferAmt
         currentind = 1;
     end
-
-   
-    rms_vals = calc_rms2(outBuffer);
-    % if RMS rises, do prerecording step
-    max_rms = max(rms_vals);
-    max_rms = max(max_rms);
-    if started == false
-        if max_rms > threshold
-            started = true;
-            inind = currentind-1;
-            if inind < 1
-                inind = bufferAmt;
-            end
-            STOPind = mod(inind + bufferAmt-3, bufferAmt)+1;
-        end
-    end
-    
-    % if RMS falls, do postrecording step
-    if started == true
-        if clip_detect(outBuffer,headroomDB,numclips)
-            clipped = true;
-        end
-        if currentind ~= STOPind
-            if currentind > inind + minbufferAmt
-                if max_rms < threshold
-                    outind = currentind;
-                    recording = false;
-                end
-            end
-        else
-            outind = STOPind;
-            recording = false;
-        end
-       
-    end
-    % if prerecording and postrecording is done (and for long enough), end
-    if inind && outind
-    end
 end
-% unwrap function
-
-
+% circular buffer unwrap function
 
 for chan = 1:channelCount
     temp = mainBuffer(chan,:,:); % this is not the way
