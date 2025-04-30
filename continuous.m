@@ -35,11 +35,12 @@ meas_out = zeros(channelCount,bufferSz*bufferAmt);
 % initialization
 running = true;
 active = false;
-inind = 0;
+detect_stop = false;
+lst_a = active;
+hyst = 0;
 currentind = 1;
-outind = 0;
-STOPind = 0;
 clipped = false;
+
 while running == true
 
     % record buffers 
@@ -48,23 +49,28 @@ while running == true
     
     % analyse RMS values
     rms_vals = calc_rms2(outBuffer);
-    max_rms = max(rms_vals);
-    max_rms = max(max_rms);
+    temp1 = max(rms_vals);
+    max_rms = max(temp1);
+
+    temp2 = max(outBuffer);
+    max_peak = abs(max(temp2));
     % add samples to main circular buffer
     for chan = 1:channelCount
         mainBuffer(chan,currentind,:) = outBuffer(:,chan);
     end
 
     % FSM control
-    if max_rms >= threshold
+    if max_peak >= threshold
         hyst = 0;
         active = true;
+        disp("Active")
     else
         hyst = hyst + 1;
         if hyst > 5 % hysteresis
             active = false;
-            running = false;
+            %running = false;
             clipped = false;
+            disp("Standby")
         end
     end
 
@@ -82,12 +88,21 @@ while running == true
         if clip_detect(outBuffer,headroomDB,numclips)
             clipped = true; % clip detection
         end
+    end
+    if lst_a ~= active 
+        if active == true
+            detect_stop = true;
+        else
+            out_ind = currentind; 
+            % if state changes to inactive, save out index
+        end
+    end
+    if detect_stop
         if currentind == stop_ind % when buffer is full
             active = false;
             running = false;
         end
     end
-    
 
     lst_a = active;% holds last value of active
     % index incrementation and looping
@@ -100,7 +115,7 @@ end
 for chan = 1:channelCount
     temp = mainBuffer(chan,:,:);
     temp = reshape(temp,bufferAmt,bufferSz);
-    temp = circshift(temp,-start_ind,1); % unwrap circular buffer
+    temp = circshift(temp,-(start_ind-1),1); % unwrap circular buffer WIP
     meas_out(chan,:) =  reshape(temp',1,[]);
 end    
 if clipped == true
@@ -108,4 +123,9 @@ if clipped == true
 end
 
 plot(meas_out(1,:))
+hold on
+plot(meas_out(2,:))
+plot(meas_out(3,:))
+plot(meas_out(4,:))
 % TODO: Multi channel
+% TODO: When activated nothing happens????
