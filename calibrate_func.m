@@ -63,8 +63,8 @@ while (~done)
             end
         end
         freqs = (Fs./avg_diff);
-        freqs(freqs>1400)=0;
-        freqs(freqs<600)=0;
+        freqs(freqs>1100)=0;
+        freqs(freqs<900)=0;
         for num = 1:mics
             if calib(num) == 0
                 if freqs(num) ~= 0
@@ -74,7 +74,7 @@ while (~done)
                 end
                 if hold(num) == 4
                     rms = calc_rms2(array(:,num));
-                    if (rms) > 0.01 % -40 dbFS 
+                    if (rms) > 0.005 % -46 dbFS 
                         rms_vals(num) = rms;
                         calib(num) = 1;
                         cal_vect(num) = true; 

@@ -85,9 +85,6 @@ while running == true
                 stop_ind = bufferAmt;
             end
         end
-        if clip_detect(outBuffer,headroomDB,numclips)
-            clipped = true; % clip detection
-        end
     end
     if lst_a ~= active 
         if active == true
@@ -118,9 +115,7 @@ for chan = 1:channelCount
     temp = circshift(temp,-(start_ind-1),1); % unwrap circular buffer WIP
     meas_out(chan,:) =  reshape(temp',1,[]);
 end    
-if clipped == true
-    % error and light up the indicator
-end
+
 
 plot(meas_out(1,:))
 hold on
