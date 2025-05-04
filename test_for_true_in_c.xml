@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<struct>
+    <spkrL>1</spkrL>
+    <spkrR>2</spkrR>
+    <has_audio_in>true</has_audio_in>
+    <n_meas>1</n_meas>
+    <meas_angle>90</meas_angle>
+    <meas_center>0</meas_center>
+    <array_dir>Horizontal</array_dir>
+    <angles>0</angles>
+    <mic>
+        <az>0</az>
+        <el>0</el>
+        <chan>65</chan>
+    </mic>
+    <mic>
+        <az>0</az>
+        <el>0</el>
+        <chan>66</chan>
+    </mic>
+    <mic>
+        <az>0</az>
+        <el>0</el>
+        <chan>67</chan>
+    </mic>
+    <mic>
+        <az>0</az>
+        <el>0</el>
+        <chan>68</chan>
+    </mic>
+</struct>
