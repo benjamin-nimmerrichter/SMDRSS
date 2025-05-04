@@ -1,0 +1,11 @@
+device = mididevice("MIDI Device Name");
+B = hex2dec(strcat("6","8")); % bank/device ID
+M = hex2dec(strcat("6","8")); % mm - message type
+N = hex2dec(strcat("6","8")); % nn 
+O = hex2dec(strcat("6","8")); % oo
+
+% 10h - request data
+% 20h - set value
+% SysEx header, manufacturer ID, model ID
+sysexMsg = uint8([240 0 32 13 104 B M N O 247]); % 240=F0, 247=F7
+midisend(device, sysexMsg);
