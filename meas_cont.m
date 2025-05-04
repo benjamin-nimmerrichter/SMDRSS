@@ -32,13 +32,13 @@ while running == true
     outBuffer = aPR(inBuffer);
     
     % analyse RMS values
-    rms_vals = calc_rms2(outBuffer);
-    temp1 = max(rms_vals);
-    max_rms = max(temp1);
+    %rms_vals = calc_rms2(outBuffer);
+    %temp1 = max(rms_vals);
+    %max_rms = max(temp1);
     
     % detect peaks
-    %temp2 = max(outBuffer);
-    %max_peak = abs(max(temp2));
+    temp2 = max(outBuffer);
+    max_peak = abs(max(temp2));
     
     % add samples to main circular buffer
     for chan = 1:mics
@@ -46,18 +46,16 @@ while running == true
     end
 
     % FSM control
-    if max_rms >= threshold
+    if max_peak >= threshold
         hyst = 0;
         active = true;
-        str = ["Active" num2str(max_rms)];
+        str = ["Active" num2str(max_peak)];
         disp(str)
     else
         hyst = hyst + 1;
         if hyst > 5 % hysteresis
             active = false;
             %running = false;
-             str = ["Standby" num2str(max_rms)];
-            disp(str)
         end
     end
 
