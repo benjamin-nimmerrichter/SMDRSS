@@ -1,6 +1,6 @@
-# SMDRSS Measurement Application
+# SMDRSS Acoustic Measurement Application
 
-To run the program start the **SMDRSS** shortcut or you can open the **SMDRSS** file in the scripts file.
+To run the program you can either start the `SMDRSS` shortcut in the main folder or you can open the `SMDRSS` file in the `scripts` folder.
 
 File structure:
 - `config_files` - contains configurations saved in measurement app
@@ -11,7 +11,8 @@ File structure:
 
 
 # About
-This application is developed by Benjamin Nimmerrichter. The aim of this application is to make aucoustic measurements as haslle free as possible.
+This application is developed by Benjamin Nimmerrichter. The aim of this application is to make aucoustic measurements as haslle free as possible. This application allows acoustic measurements using a single microphone or an array of microphones. 
+You can show measurements in time domain or frequency domain. Available analyses are **Fractional octave analysis**, **Frequency response**, **2D directional response**, **3D directional response** and **Signal in the time domain**. Synchronous (speakers) and asynchronous (acoustic instruments) sound soures are supported.
 
 
 
