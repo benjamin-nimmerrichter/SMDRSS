@@ -3,11 +3,11 @@
 To run the program start the **SMDRSS** shortcut or you can open the **SMDRSS** file in the scripts file.
 
 File structure:
-- 'config_files' - contains configurations saved in measurement app
-- 'measurement_files' - contains measured data from mesurement app
-- 'measurement_tones' - contains measurement tones
-- 'scripts' - contains all the matlab scripts
-- 'test files' - contains test scripts, which are unnecessary for the main app
+- `config_files` - contains configurations saved in measurement app
+- `measurement_files` - contains measured data from mesurement app
+- `measurement_tones` - contains measurement tones
+- `scripts` - contains all the matlab scripts
+- `test files` - contains test scripts, which are unnecessary for the main app
 
 
 # About
