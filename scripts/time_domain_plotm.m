@@ -34,4 +34,6 @@ hold on
 end
 fontsize(20,"points")
 title("Porovnání detekce spuštění vyrovnávací paměť 1024 vzorků")
+xlabel("Čas (s) \rightarrow")
+ylabel("Hodnota signálu (-) \rightarrow")
 legend(labels)
