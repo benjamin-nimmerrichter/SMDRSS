@@ -2,7 +2,7 @@
 % pokud neexistuje načti to
 function S = data_ingest()
     % 0 deg
-    load("4x stejne misto pro onset jitter_m.mat","meas");
+    load("../measurement_files/4x stejne misto pro onset jitter_m.mat","meas");
     S(1) = meas;
     % 5 deg
     %load("measurement\fix_mereni_07_03_el5_m.mat","meas");

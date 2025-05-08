@@ -1,7 +1,7 @@
 clear all
 close all
 Fs = 48000;
-x = audioread("measurement_tones/sweep_1s_48000.wav");
+x = audioread("../measurement_tones/sweep_1s_48000.wav");
 conf = load('../MERENI 360 po 5/konfigurace/meas_config.mat');
 y = zeros(conf.nmeas,length(load("../MERENI 360 po 5/meas1_main_test_n_0.mat").signal),conf.nchan);
 for meas = 1:conf.nmeas
