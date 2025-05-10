@@ -12,7 +12,7 @@ lower = cal_freq - 50;
 
 % trim options
 SPP = Fs/cal_freq; % samples per peak
-ENP = 5;   % expected number of peaks
+ENP = 7;   % expected number of peaks
 offs = round((SPP*ENP)/2); % offset of samples
 
 % keep recording time long enough for different buffer sizes
@@ -80,7 +80,7 @@ while (~done)
                 % find peaks in signal
                 [~,locs] = findpeaks(autoc);
                 amt = length(locs);
-                diff = zeros(amt,1);                
+                diff = zeros(amt-2,1);                
                 if amt < 5
                     % if there's too little peaks reset
                     avg_diff(mic) = 0;
@@ -96,9 +96,10 @@ while (~done)
 
         % calculate and check frequency
         freqs = (Fs./avg_diff);
+        %disp(freqs)
         freqs(freqs>upper)=0;
         freqs(freqs<lower)=0;
-
+        
         % chceck if 1000 Hz is detected long enough
         for mic = 1:mics
             if calib(mic) == 0
