@@ -33,8 +33,8 @@ end
 
 % trim values
 num_samples = len*buffsz;
-from = round(num_samples/2-2*offs);
-to = round(num_samples/2);
+from = round(num_samples/2-offs);
+to = round(num_samples/2+offs);
 
 % init of values
 write = 1;
@@ -46,7 +46,6 @@ hold = zeros(mics,1);
 calib = zeros(mics,1);
 rms_vals = zeros(mics,1);
 buffer = zeros(len,mics,buffsz);
-
 
 % init the while loop variable
 done = false;
@@ -71,14 +70,15 @@ while (~done)
 
         % put the signal into a 2D matrix
         lin_buff = reshape(perm,mics,[]);
-        
+
         % reset average difference
-        avg_diff = zeros(mics,1); 
+        avg_diff = zeros(mics,1);
+
         for mic = 1:mics
-            % if a peak is over -40 dBFS
-            if (max(lin_buff(mic,:)) > 0.01)   
+            % if a peak is over -46 dBFS
+            if (max(lin_buff(mic)) > 0.005)   
                 % calculate autocorrelation function
-                autoc= xcorr(lin_buff(mic,:),lin_buff(mic,:));
+                autoc = xcorr(lin_buff(mic,:),lin_buff(mic,:));
                 % trim autocorrelation function 
                 %  - this reduces CPU and memory usage
                 autoc = autoc(from:to);
@@ -89,19 +89,23 @@ while (~done)
                 % get amount of peaks
                 amt = length(locs);
                 % reset differences to 0
-                diff = zeros(amt-2,1);       
-                if amt > 4
+                diff = zeros(amt-2,1);                
+                if amt < 4
+                    % if there's not enough peaks reset
+                    avg_diff = 0;
+                else
                     % find difference between peaks
                     for pk = 1:amt-2
                         diff(pk)=locs(pk+1)-locs(pk);
                     end
-                    avg_diff(mic) = mean(diff);
+                    avg_diff = mean(diff);
                 end              
             end % if (max(lin_buff(mic)) > 0.01)  
         end % for mic = 1:mics
-        
+
         % calculate and check frequency
         freqs = (Fs./avg_diff);  
+        disp(freqs)
         freqs(freqs>upper)=0;
         freqs(freqs<lower)=0;
         
@@ -116,7 +120,7 @@ while (~done)
                 if hold(mic) == 5
                     % calculate RMS value
                     rms = calc_rms2(lin_buff(mic,:));
-                    if (rms) > 0.01 % -40 dBFS 
+                    if (rms) > 0.005 % -46 dBFS 
                         rms_vals(mic) = rms;
                         calib(mic) = 1;
                         cal_vect(mic) = true; 

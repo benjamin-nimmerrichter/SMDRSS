@@ -12,24 +12,24 @@
     <calib_freq>1000</calib_freq>
     <angles>0</angles>
     <mic>
-        <az>0</az>
-        <az>0</az>
-        <el>0</el>
-        <el>0</el>
+        <az>1</az>
+        <az>4</az>
+        <el>7</el>
+        <el>10</el>
         <chan>1</chan>
     </mic>
     <mic>
-        <az>0</az>
-        <az>0</az>
-        <el>0</el>
-        <el>0</el>
+        <az>2</az>
+        <az>5</az>
+        <el>8</el>
+        <el>11</el>
         <chan>2</chan>
     </mic>
     <mic>
-        <az>0</az>
-        <az>0</az>
-        <el>0</el>
-        <el>0</el>
+        <az>3</az>
+        <az>6</az>
+        <el>9</el>
+        <el>12</el>
         <chan>3</chan>
     </mic>
 </struct>
