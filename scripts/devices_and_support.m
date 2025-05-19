@@ -1,14 +1,17 @@
 function devices = devices_and_support(fs_list,buff_list)
+    % find devices with ASIO support
     deviceReader = audioDeviceReader('Driver', 'ASIO');
     deviceList = getAudioDevices(deviceReader);
     deviceList(strcmp(deviceList, 'Default')) = [];
+    
+    % check and write all combinations
     for i = 1:length(deviceList)
         deviceName = deviceList{i};
-        fprintf('\n=== Testuji zařízení: %s ===\n', deviceName);
+        fprintf('\n Testing device: %s \n', deviceName);
         devices(1).names(i) = string(deviceName); 
         j = 1;
         for fs = fs_list
-            fprintf('Vzorkovací frekvence: %d Hz\n', fs);
+            fprintf('* Samplerate: %d Hz\n', fs);
             k = 1;
             for buf = buff_list
                     reader = audioDeviceReader( ...
@@ -17,18 +20,18 @@ function devices = devices_and_support(fs_list,buff_list)
                         'SampleRate', fs, ...
                         'SamplesPerFrame', buf);
                 try
-                    setup(reader);  % Inicializace zařízení
+                    setup(reader);  % Initialize device with settings
                     release(reader);
-                    fprintf('  ✔ Buffer %d vzorků: OK\n', buf);
+                    fprintf('* * Buffer %d samples: OK\n', buf);
                     devices(i).fs(j) = fs; 
                     devices(i).buffer(k) = buf; 
                 catch ME
-                    fprintf('  ✘ Buffer %d vzorků: Chyba (%s)\n', buf, ME.message);
+                    fprintf(' * * Buffer %d samples: error (%s)\n', buf, ME.message);
                 end
+                pause(0);
                 k = k+1;
-            end
+            end % buf = buff_list
             j = j+1;
-        end
+        end % fs = fs_list
     end
-
 end
