@@ -1,0 +1,57 @@
+bufferSizes = [256, 512, 1024];
+sampleRates = [44100, 48000, 96000];
+
+
+%S = devices_and_support(sampleRates,bufferSizes);
+[A,B] = list_vals(S(1).buffer);
+[C,D] = list_vals(S(1).fs);
+
+
+% % Seznam vzorkovacích frekvencí k otestování
+% sampleRates = [44100, 48000, 96000, 192000];
+% 
+% buffSizes = [128, 256, 512, 1024];
+% % Získání všech zařízení
+% deviceReader = audioDeviceReader('Driver', 'ASIO');
+% deviceList = getAudioDevices(deviceReader);
+% 
+% fprintf('Nalezeno ASIO zařízení:\n');
+% disp(deviceList);
+% 
+% for i = 1:length(deviceList)
+%     deviceName = deviceList{i};
+%     fprintf('\nTestuji zařízení: %s\n', deviceName);
+% 
+%     for fs = sampleRates
+%         try
+%             reader = audioDeviceReader( ...
+%                 'Driver', 'ASIO', ...
+%                 'Device', deviceName, ...
+%                 'SampleRate', fs, ...
+%                 'SamplesPerFrame', 256);  % Malý buffer
+%             % Ověříme funkčnost
+%             setup(reader);
+%             release(reader);
+%             fprintf('  ✔ Podporováno: %d Hz\n', fs);
+%         catch ME
+%             fprintf('  ✘ Nepodporováno: %d Hz (%s)\n', fs, ME.message);
+%         end
+%     end
+% 
+%     for bits = bitDepths
+%         try
+%             reader = audioDeviceReader( ...
+%                 'Driver', 'ASIO', ...
+%                 'Device', deviceName, ...
+%                 'SampleRate', fs, ...
+%                 'SamplesPerFrame', 256, ...
+%                 'BitD');  % Malý buffer
+%             % Ověříme funkčnost
+%             setup(reader);
+%             release(reader);
+%             fprintf('  ✔ Podporováno: %d Hz\n', fs);
+%         catch ME
+%             fprintf('  ✘ Nepodporováno: %d Hz (%s)\n', fs, ME.message);
+%         end
+%     end
+% end
