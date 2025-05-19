@@ -23,6 +23,8 @@ for pass = 1:passes
     end
 end
 
+f = figure;
+f.Position = [100 100 800 500];
 
 for point = 1:points
 signal_1d = reshape(signal(1,1,point,:),1,[]);
@@ -32,7 +34,7 @@ s = strcat("Měření č.", num2str(point),", energie = ",num2str(energy(point))
 labels(point) = s;
 hold on
 end
-fontsize(20,"points")
+fontsize(15,"points")
 title("Porovnání detekce spuštění vyrovnávací paměť 1024 vzorků")
 xlabel("Čas (s) \rightarrow")
 ylabel("Hodnota signálu (-) \rightarrow")

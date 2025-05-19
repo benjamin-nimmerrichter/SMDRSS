@@ -1,6 +1,6 @@
 function success = save_config(config,name)
 name = fname_processor(".xml","_c", name);
-path = strcat("../config_files",name);
+path = strcat("../config_files/",name);
 writestruct(config,path)
 if exist(name,"file") 
     success = 1;
