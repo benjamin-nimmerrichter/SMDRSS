@@ -16,30 +16,43 @@ You can show measurements in time domain or frequency domain. Available analyses
 
 # Configuration data structure
 `config` - the main access variable
-- `.array_dir`
-- `.n_meas`
-- `.meas_center`
-- `.meas_angle`
-- `.array_dir`
-- `.sprkrL`
-- `.spkrR`
-- `.has_audio_in`
-- `.passes`
+- `.array_dir` - array direction (Staic, Horizontal, Vertical)
+- `.n_meas` - number of measurements per pass
+- `.meas_center` - center of measurement
+- `.meas_angle` - measurement angle sector
+- `.sprkrL` - left speaker channel mapping
+- `.spkrR` - right speaker channel mapping
+- `.has_audio_in` - if the source accepts input signals from the program
+- `.start_ch` - start channel for mic map
+- `.passes`	- measurement passes
 - `.angles(m)` - **m** - measurement
+- `.calib_freq` - calibration frequency
 
 - `.mic(k)` - **k** - mic number
 	- `.az(p)` - initial azimuth angle, **p** - pass
 	- `.el(p)` - initial elevation angle, **p** - pass
 	- `.chan` - mic channel mapping
 	
-	
-to acces the signal from microphone 3 from measurement
+
 # Measurement data structure
 `meas(n)` - the main access variable, **n** is the amount of measurement passes
-
+- `.type` - linked to "config.has_audio_in" (sync,async)
+- `.atten` - attenuation setting
+- `.headroom` - headroom for clip detect algorithm
+- `.num_clips` - number of clips for clip detect algorithm
+- `.min_SNR` - minimal allowed SNR
+- `.dev` - structure for device settings
+	- `.fs` - samplerate
+	- `.sel_dev`
+	- `.n_bits`
+	- `.buffer_sz`
 - `.mic(k)`
-	- `.signal()` - array of signal samples
-
+	- `.signal` - array of signal samples
+	- `.noise`
+	- `.calib`
+	- `.SNR`
+	
+To acces the signal from microphone 3 from measurement 4 from pass 5 you would write "app.meas(**5**).mic(3).point(4).sig()"
 # TODO LIST
 1. check integrity setup dat
 2. funkcionalita zvuku
