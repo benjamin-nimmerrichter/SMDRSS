@@ -1,0 +1,14 @@
+function [f,Y] = calc_freq_resp_async(data)
+    sig = data.sig;
+    az  = data.az;
+    el  = data.el;
+    fs  = data.fs;
+    cal = data.cal
+    len = ceil(length(sig)/2);
+
+    Y_sym = fftshift(fft(sig));
+    Y_lin = abs(Y_sym(len:2*len));
+    %Y_rms = calc_rms2(Y_lin');
+    Y = calc_db(cal,Y_lin,true);
+    f = linspace(0,fs/2,len+1);
+end
