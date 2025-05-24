@@ -4,10 +4,13 @@ function [f,Y] = calc_freq_resp_async(data)
     el  = data.el;
     fs  = data.fs;
     cal = data.cal;
+
     len = ceil(length(sig)/2);
-    x = calc_db(cal,sig,true);
-    Y_sym = fftshift(fft(x));
-    Y_lin = abs(Y_sym(len:2*len));
-    Y = 
+    Y_sym = abs(fftshift(fft(sig)));
+    Y_lin = 2*Y_sym(len:2*len)/len;
+    Y = calc_db(cal,Y_lin,true);
+  
     f = linspace(0,fs/2,len+1);
+    Y(1:20)
+    f(1:20)
 end
