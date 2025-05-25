@@ -4,6 +4,22 @@ function devices = devices_and_support(fs_list,buff_list)
     deviceList = getAudioDevices(deviceReader);
     deviceList(strcmp(deviceList, 'Default')) = [];
     
+    
+    % ---configuration caching ---
+     % check if cache exists
+    if exist("dev_conf_cache.mat","file")
+        % load cache
+        load("dev_conf_cache.mat","devices");
+        % check if saved devices are the same
+        if devices(1).names == string(deviceList)
+            % if they are use cache
+            return
+        end
+        % if they are not, check devices
+    end
+
+    
+
     % check and write all combinations
     for i = 1:length(deviceList)
         deviceName = deviceList{i};
@@ -34,4 +50,6 @@ function devices = devices_and_support(fs_list,buff_list)
             j = j+1;
         end % fs = fs_list
     end
+    % cache result
+    save("dev_conf_cache.mat","devices");
 end
