@@ -4,21 +4,20 @@ function [f,Y, Y_lin] = calc_freq_resp_async(data)
     cal = data.cal;
     sz = size(sigs,2);
     len = ceil(size(sigs,1)/2);
-    sz
-    len
     if sz > 1
         ind = 1; 
         Y = zeros(len+1,sz);
         Y_lin = zeros(len+1,sz);
         for sig = sigs
-            Y_sym = abs(fftshift(fft(sig(:))));         
-            Y_lin(:,ind) = [Y_sym(len); 2*Y_sym(len+1:2*len)]./len;
+            Y_sym = abs(fftshift(fft(sig(:))));
+            temp = [Y_sym(len); 2*Y_sym(len+1:2*len)]./len;
+            Y_lin(:,ind) = temp;
             if length(cal) > 1
-                Y(:,ind) = calc_db(cal(ind),Y_lin,true);
+                Y(:,ind) = calc_db(cal(ind),Y_lin(:,ind),true);
             else
-                Y(:,ind) = calc_db(cal,Y_lin,true);
+                Y(:,ind) = calc_db(cal,Y_lin(:,ind),true);
             end
-            ind = ind +1
+            ind = ind + 1;
         end
     else
         sig = sigs;

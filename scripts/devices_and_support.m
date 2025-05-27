@@ -11,8 +11,6 @@ function devices = devices_and_support(fs_list,buff_list)
         % load cache
         load("dev_conf_cache.mat","devices");
         % check if saved devices are the same
-        length(devices(1).names)
-        length(deviceList)
         if length(devices(1).names) == length(deviceList)
             if devices(1).names == string(deviceList)
                 % if they are use cache
@@ -25,7 +23,7 @@ function devices = devices_and_support(fs_list,buff_list)
         % if they are not, check devices
     end
 
-    devices = structure();
+    devices = struct();
     
     % check and write all combinations
     for i = 1:length(deviceList)
