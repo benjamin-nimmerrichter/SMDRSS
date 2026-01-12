@@ -1,8 +1,8 @@
 function meas = load_meas(name)
+strcat("measurement\",name)
 if exist(name,"file") 
     if endsWith(name,"_m.mat")
-        temp = load(name);
-        meas = temp.meas;
+        meas = load(name);
         return
     end
 end
