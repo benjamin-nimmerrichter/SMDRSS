@@ -1,4 +1,4 @@
-# SMDRSS Acoustic Measurement Application
+# SMDRSS Acoustic Measurement Framework
 
 To run the program you can either start the `SMDRSS` shortcut in the main folder or you can open the `SMDRSS` file in the `scripts` folder.
 
@@ -7,12 +7,14 @@ File structure:
 - `measurement_files` - contains measured data from mesurement app
 - `measurement_tones` - contains measurement tones
 - `scripts` - contains all the matlab scripts
-- `test files` - contains test scripts, which are unnecessary for the main app
+- `test files` - contains test scripts, which are for development purposes (this folder will dissapear with time)
 
 
 # About
-This application is developed by Benjamin Nimmerrichter. The aim of this application is to make aucoustic measurements as haslle free as possible. This application allows acoustic measurements using a single microphone or an array of microphones. 
-You can show measurements in time domain or frequency domain. Available analyses are **Fractional octave analysis**, **Frequency response**, **2D directional response**, **3D directional response** and **Signal in the time domain**. Synchronous (speakers) and asynchronous (acoustic instruments) sound soures are supported.
+This framework is developed by Benjamin Nimmerrichter. The aim of this application is to make aucoustic measurements as haslle free as possible. This application allows acoustic measurements using a single microphone or an array of microphones. 
+You can show measurements in time domain or frequency domain. Available analyses are **Fractional octave analysis**, **Frequency response**, **Magnitude Spectrum**, **2D directional response**, **3D directional response** and **Signal in the time domain**. Synchronous (speakers) and asynchronous (acoustic instruments) sound soures are supported.
+
+**SMDRSS** stands for: **S**ystem for **M**easuring **D**iresctional **R**esponses of **S**ound **S**ources and is read same as the name Smithers
 
 # Configuration data structure
 `config` - the main access variable
