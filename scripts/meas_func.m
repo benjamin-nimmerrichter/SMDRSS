@@ -4,7 +4,7 @@ sig = [sig; zeros(buffsz*2,1)];
 
 sig = attenuation.*sig;
 if (Fs ~= sig_Fs)
-    [P,Q] = rat(sig_Fs/Fs);
+    [P,Q] = rat(Fs / sig_Fs);
     sig = resample(sig,P,Q);
 end
 
