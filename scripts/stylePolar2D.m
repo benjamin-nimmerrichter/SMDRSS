@@ -1,19 +1,19 @@
 function stylePolar2D(ax, min_val, max_val, leg_lbls, plot_title, zero_loc, theta_dir)
-    % Aplikace orientace (Horizontální = Top/CW, Vertikální = Right/CCW)
+    % Apply orientation (Horizontal = Top/CW, Vertical = Right/CCW)
     ax.ThetaZeroLocation = zero_loc;
     ax.ThetaDir = theta_dir;
     
-    % Mřížka a nadpis
+    % Grid and title
     grid(ax, 'on');
     ax.GridAlpha = 0.4;
     title(ax, plot_title, 'FontWeight', 'bold', 'FontSize', 12);
     
-    % Legenda
+    % Legend
     if ~isempty(leg_lbls)
         legend(ax, leg_lbls, 'Location', 'bestoutside', 'Interpreter', 'none');
     end
     
-    % --- Inteligentní škálování dB ---
+    % --- Smart dB scaling ---
     range_span = 50; 
     
     upper_lim = ceil(max_val / 5) * 5; 
@@ -29,7 +29,7 @@ function stylePolar2D(ax, min_val, max_val, leg_lbls, plot_title, zero_loc, thet
     
     rlim(ax, [lower_lim, upper_lim]);
     
-    % Popisky osy
+    % Axis labels
     try
         ax.RAxis.Label.String = 'Amplitude (dB)';
     catch

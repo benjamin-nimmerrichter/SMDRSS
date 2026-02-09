@@ -1,5 +1,5 @@
 function plotDirectional2D(data, band_db_vals, cf, min_b, max_b, target)
-    % --- 1. Target Logic (Příprava os) ---
+    % --- 1. Target Logic (Axes Preparation) ---
     if isempty(target)
         fig = figure('Position',[100 100 800 600], 'Name', 'Directional Response');
         ax = polaraxes(fig);
@@ -17,33 +17,33 @@ function plotDirectional2D(data, band_db_vals, cf, min_b, max_b, target)
         end
     end
     
-    % --- 2. Detekce roviny a nastavení orientace ---
+    % --- 2. Plane Detection and Orientation Setup ---
     
     num_az = numel(unique(data.az));
     num_el = numel(unique(data.el));
     
     if num_az > num_el
-        % === HORIZONTÁLNÍ (Azimuth) ===
-        % 0° směřuje nahoru (Top)
+        % === HORIZONTAL (Azimuth) ===
+        % 0° points up (Top)
         plot_angles = data.az;
         plot_title = "Horizontal Directivity (Azimuth)";
         zero_loc = 'top';       
-        theta_dir = 'clockwise'; % U horizontálu jdeme většinou po směru
+        theta_dir = 'clockwise'; % For horizontal, we usually go clockwise
     else
-        % === VERTIKÁLNÍ (Elevation) ===
-        % 0° směřuje doprava (Right) -> aby 90° bylo nahoře
+        % === VERTICAL (Elevation) ===
+        % 0° points right -> so that 90° is at the top
         plot_angles = data.el;
         plot_title = "Vertical Directivity (Elevation)";
         zero_loc = 'right';     
-        theta_dir = 'counterclockwise'; % U vertikálu chceme +90° nahoru (matematicky kladný směr)
+        theta_dir = 'counterclockwise'; % For vertical, we want +90° up (mathematically positive direction)
     end
     
-    % Seřazení úhlů pro správné vykreslení čáry
+    % Sort angles for correct line plotting
     [sorted_angles, sort_idx] = sort(plot_angles);
     phi = deg2rad(sorted_angles);
     band_db_vals_sorted = band_db_vals(:, sort_idx);
-
-    % --- 3. Vykreslování ---
+    
+    % --- 3. Plotting ---
     hold(ax, 'on');
     
     min_db = inf; 
@@ -68,9 +68,8 @@ function plotDirectional2D(data, band_db_vals, cf, min_b, max_b, target)
     
     hold(ax, 'off');
     
-    % --- 4. Stylizace (předáváme zero_loc a theta_dir) ---
+    % --- 4. Styling (passing zero_loc and theta_dir) ---
     if isinf(min_db), min_db = -100; end
     if isinf(max_db), max_db = 0; end
-
     stylePolar2D(ax, min_db, max_db, leg_lbls, plot_title, zero_loc, theta_dir);
 end

@@ -1,39 +1,39 @@
 function ax = plotIR(sig, fs, leg_lbls, target, ref_data)
-    % --- 1. LOGIKA VÝPOČTU (Calculation & Processing) ---
-    % Výchozí stav: Async (zobrazujeme to, co přišlo)
+    % --- 1. CALCULATION & PROCESSING LOGIC ---
+    % Default state: Async (displaying raw input)
     process_type = "Waveform";
-    align = true; % Vždy chceme zarovnat na špičku/náběh
+    align = true; % Always align to peak/onset
     
-    % Pokud jsme dostali referenční data, počítáme Impulsní Odezvu
+    % If reference data is provided, calculate Impulse Response
     if ~isempty(ref_data) && ~isempty(ref_data.ref_sig)
         process_type = "Impulse Response";
         
         raw_ref = ref_data.ref_sig;
         raw_ref_fs = ref_data.ref_fs;
         
-        % A) Sjednocení Sample Rate (Resampling)
-        % Pokud se FS nahrávky liší od FS reference, reference se musí přizpůsobit.
+        % A) Unify Sample Rates (Resampling)
+        % If recording FS differs from reference FS, adjust the reference.
         if raw_ref_fs ~= fs
             [P, Q] = rat(fs / raw_ref_fs);
             raw_ref = resample(raw_ref, P, Q);
         end
         
-        % B) Stereo -> Mono (pro xcorr)
+        % B) Stereo -> Mono (for xcorr)
         if size(raw_ref, 2) > 1
             raw_ref = raw_ref(:, 1);
         end
         
-        % C) Výpočet IR (Dekonvoluce / Cross-Correlation)
+        % C) Calculate IR (Deconvolution / Cross-Correlation)
         ir_calculated = zeros(size(sig));
         win_len = size(sig, 1);
         
         for ch = 1:size(sig, 2)
             [c, ~] = xcorr(sig(:, ch), raw_ref);
             
-            % Najdeme špičku a ořízneme relevantní část
+            % Find peak and crop relevant part
             [~, idx_peak] = max(abs(c));
             
-            % 100 vzorků před špičkou, zbytek za ní
+            % 100 samples before peak, the rest after
             start_pt = max(1, idx_peak - 100); 
             end_pt = min(length(c), start_pt + win_len);
             
@@ -41,17 +41,17 @@ function ax = plotIR(sig, fs, leg_lbls, target, ref_data)
             ir_calculated(1:length(snippet), ch) = snippet;
         end
         
-        % Přepíšeme původní signál vypočítanou IR
+        % Overwrite original signal with calculated IR
         sig = ir_calculated;
     end
     
-    % --- 2. NORMALIZACE ---
+    % --- 2. NORMALIZATION ---
     max_val = max(abs(sig(:)));
     if max_val > 0
         sig = sig ./ max_val;
     end
-
-    % --- 3. VYKRESLOVÁNÍ (Plotting Logic) ---
+    
+    % --- 3. PLOTTING LOGIC ---
     % --- Target Logic ---
     if isempty(target)
         f = figure('Name', process_type, 'Color', 'w');
@@ -79,7 +79,7 @@ function ax = plotIR(sig, fs, leg_lbls, target, ref_data)
         end
         
         xlabel(ax, 'Time relative to peak (s) \rightarrow');
-        % Smart Zoom: -2ms až +50ms
+        % Smart Zoom: -2ms to +50ms
         xlim(ax, [-0.002, 0.050]); 
         
     else
