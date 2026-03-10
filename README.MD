@@ -1,83 +1,84 @@
-# SMDRSS Acoustic Measurement Framework
+# SMDRSS: Low-Cost MATLAB Framework for Electroacoustic Measurements
 
-To run the program you can either start the `SMDRSS` shortcut in the main folder or you can open the `SMDRSS` file in the `scripts` folder.
+**SMDRSS** stands for **System for Measuring Directional Responses of Sound Sources**. This is an open-source, MATLAB-based framework designed for flexible laboratory use with standard audio hardware. It provides a modular software architecture enabling reproducible acoustic measurements using common ASIO-compatible audio interfaces and measurement microphones.
 
-File structure:
-- `config_files` - contains configurations saved in measurement app
-- `measurement_files` - contains measured data from mesurement app
-- `measurement_tones` - contains measurement tones
-- `scripts` - contains all the matlab scripts
-- `test files` - contains test scripts, which are for development purposes (this folder will dissapear with time)
+## Features
 
+- **Dual Acquisition Modes:** Supports both synchronous measurements (known excitation signal, e.g., speakers) and asynchronous measurements of independent acoustic sources (e.g., instruments).
+- **Automated Signal Quality Control:** Includes built-in verification for Signal-to-Noise Ratio (SNR), clipping detection, and robust onset-detection algorithms employing circular-buffer hysteresis.
+- **Comprehensive Analysis Modules:**
+  - Frequency Response (Transfer Function Estimation)
+  - Magnitude Spectrum
+  - Fractional-Octave Processing (1/3-octave bands)
+  - Directional Response (2D Polar and 3D Spherical Plots)
+  - Impulse Response (Time Domain via IFFT/Swept-Sine)
+- **Calibration:** Supports absolute SPL calibration using acoustic calibrators or relative calibration for microphone arrays.
+- **Compliance:** Measurement geometries adhere to AES56 recommendations.
 
-# About
-This framework is developed by Benjamin Nimmerrichter. The aim of this application is to make aucoustic measurements as haslle free as possible. This application allows acoustic measurements using a single microphone or an array of microphones. 
-You can show measurements in time domain or frequency domain. Available analyses are **Fractional octave analysis**, **Frequency response**, **Magnitude Spectrum**, **2D directional response**, **3D directional response** and **Signal in the time domain**. Synchronous (speakers) and asynchronous (acoustic instruments) sound soures are supported.
+## Hardware Requirements
 
-**SMDRSS** stands for: **S**ystem for **M**easuring **D**iresctional **R**esponses of **S**ound **S**ources and is read same as the name Smithers
+The system operates with standard ASIO interfaces and supports user-defined measurement geometries.
 
-# Configuration data structure
-`config` - the main access variable
-- `.array_dir` - array direction (Staic, Horizontal, Vertical)
-- `.n_meas` - number of measurements per pass
-- `.meas_center` - center of measurement
-- `.meas_angle` - measurement angle sector
-- `.sprkrL` - left speaker channel mapping
-- `.spkrR` - right speaker channel mapping
-- `.has_audio_in` - if the source accepts input signals from the program
-- `.start_ch` - start channel for mic map
-- `.passes`	- measurement passes
-- `.angles(m)` - **m** - measurement
-- `.calib_freq` - calibration frequency
+- **Audio Interface:** Any ASIO-compatible interface (e.g., RME, Focusrite).
+- **Microphones:** Supports single microphones or arrays (limited by channel count). Recommended: Audix TM-1 or Behringer ECM8000.
+- **Sound Source:** Compatible with speakers and or acoustic instruments.
 
-- `.mic(k)` - **k** - mic number
-	- `.az(p)` - initial azimuth angle, **p** - pass
-	- `.el(p)` - initial elevation angle, **p** - pass
-	- `.chan` - mic channel mapping
-	
+## Installation and Usage
 
-# Measurement data structure
-`meas(n)` - the main access variable, **n** is the amount of measurement passes
-- `.type` - linked to "config.has_audio_in" (sync,async)
-- `.atten` - attenuation setting
-- `.headroom` - headroom for clip detect algorithm
-- `.num_clips` - number of clips for clip detect algorithm
-- `.min_SNR` - minimal allowed SNR
-- `.dev` - structure for device settings
-	- `.fs` - samplerate
-	- `.sel_dev`
-	- `.n_bits`
-	- `.buffer_sz`
-- `.mic(k)`
-	- `.point()`
-		- `.signal` - array of signal samples
-		- `.noise`
-		- `.calib`
-		- `.SNR`
-	
-To acces the signal from microphone 3 from measurement 4 from pass 5 you would write "app.meas(**5**).mic(3).point(4).sig()"
-# TODO LIST
-1. check integrity setup dat
-2. funkcionalita zvuku
-3. generace tónů
-- harm. signál LUT pro 1 periodu
-- přehrání standardizovaného šumu
-4. kalibrace 
-- kalibrační skript
-- zobrazení dat mikrofonů 
-- formát aby 8 i 64 miců vypadalo nějak ok asi scrollovací list
-- měření SNR
-- clip_detect
-- lepší výsledky korelace
-5. měření
-- záznam
-- normalizace na -3 dBFS
-6. zobrazení dat polární a sférický graf
-- polární plot
-- sférický plot
-- zlomkooktávová analýza
-- amplitudové spektrum
-- export grafů ve vektorovém formátu
-7. komunikace s otočnou hlavou
-- spojení a test
-- pohyb
+### Running the Application
+
+To run the program, you can either:
+
+1. Start the `SMDRSS` shortcut in the main folder (MATLAB App Designer).
+2. Open the `SMDRSS` file directly from the `scripts` folder for script-based execution.
+
+### File Structure
+
+- **`config_files`**: Contains configurations saved during measurement sessions.
+- **`measurement_files`**: Stores measured data and analysis results.
+- **`measurement_tones`**: Contains generated test tones (e.g., sweeps, calibration tones).
+- **`scripts`**: Contains all MATLAB scripts for processing and analysis.
+- **`test_files`**: Development scripts intended for debugging; may be deprecated in future versions.
+
+## Configuration Data Structure
+
+The main access variable is `config`. Key parameters include:
+
+- `.array_dir`: Array direction (Static, Horizontal, Vertical).
+- `.n_meas`: Number of measurements per pass.
+- `.meas_center`: Center of measurement geometry.
+- `.meas_angle`: Measurement angle sector.
+- `.has_audio_in`: Boolean flag indicating if the source accepts input signals (Synchronous mode).
+- `.start_ch`: Start channel for microphone mapping.
+- `.passes`: Total number of measurement passes.
+- `.angles(m)`: Azimuth/Elevation angles for pass `m`.
+- `.calib_freq`: Calibration frequency for tone detection.
+- `.mic(k)`: Microphone configuration for index `k`.
+  - `.az(p)`: Initial azimuth angle for pass `p`.
+  - `.el(p)`: Initial elevation angle for pass `p`.
+  - `.chan`: Microphone channel mapping.
+
+## Measurement Data Structure
+
+The main access variable is `meas`, where `n` represents the number of measurement passes.
+
+- `.type`: Linked to `config.has_audio_in` ('sync' or 'async').
+- `.atten`: Attenuation setting.
+- `.headroom`: Headroom for clipping detection algorithm.
+- `.num_clips`: Threshold for clipping detection (samples exceeding -3dBFS).
+- `.min_SNR`: Minimal allowed Signal-to-Noise Ratio (default ≥20 dB).
+- `.dev`: Device settings structure.
+  - `.fs`: Sampling rate.
+  - `.sel_dev`: Selected audio device.
+  - `.n_bits`: Bit depth.
+  - `.buffer_sz`: Circular buffer size.
+
+### Data Access Example
+
+To access the signal from Microphone 3, Measurement 4, Pass 5:
+
+```matlab
+app.meas(5).mic(3).point(4).signal
+```
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
